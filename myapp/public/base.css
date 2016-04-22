@@ -1,0 +1,38 @@
+body {
+  padding: 50px;
+  font: 30px "Lucida Grande", Helvetica, Arial, sans-serif;
+  text-align: center;
+
+}
+
+a {
+  color: #00B7FF;
+}
+
+invisible{
+	visibility:hidden;
+}
+
+#intro{
+	text-align: center;
+	display: inline-block;
+	font-size: 16px;
+}
+
+.overlay{
+	display: none;
+}
+
+#dice {
+    display: inline-block;
+    border-collapse: separate;
+	border-spacing: 50px;
+}
+
+#dice td{
+	
+	height: 100px;
+	width: 100px;
+	border: 1px solid black;
+	
+}
