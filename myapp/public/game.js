@@ -1,13 +1,15 @@
 function main() {
 	//document.getElementById("error-message").classList.add('invisibility');
 	document.getElementById("intro").addEventListener("click", playGame);
-
-
+	
+	var computerscore;
+	var yourscore;
 	
 	function removeForm(field){
 		var ele=document.getElementById(field);
 		ele.parentNode.removeChild(ele);
 	}
+
 
 	function ComputerScore(){
 		//var score= [];
@@ -22,22 +24,142 @@ function main() {
 			 string=string.concat(sum.toString());
 			}
 			else string=string.concat(" + ");
-
+			computerscore=sum;
 		}
 		return string;
 	}
-	function YourScore(){
+	function YourScore(dice){
 		var score=0;
-		return score.toString();
+		if(dice==undefined) {
+			document.getElementById('YourScore').innerHTML="Your Score is 0";
+		}
+		else{
+			for(var i=0; i<dice.length; i++){
+				if(dice[i]==true ){
+					col= document.getElementById('col-'+(i+1));
+					num=Number(col.innerHTML);
+					if(num!==3) score+=num;
+				}
+			}
+			yourscore=score;
+			document.getElementById('YourScore').innerHTML="Your Score is " + score.toString();
+
+			
+		}
+
+		return
 	}
 
-	function roll(){
+	
 
+	function rollDice(){
+		return Math.floor((Math.random()* 5)+1).toString();
 	}
-	function pin(){
 
-	}
+
+	
 	function playGame(){
+		var pinned=[];
+			
+		function dice(){
+			
+			document.getElementById('roll').setAttribute("disabled", "disabled");
+			document.getElementById('pin').removeAttribute("disabled");
+
+			for(var i=0; i< 5; i++){
+
+				//don't roll pinned dice
+				if(pinned[i]==true) continue;
+				var col=document.getElementById("col-"+(i+1));
+			
+				col.innerHTML = rollDice();
+			}
+			choosingPin();
+		}
+
+		function choosingPin(){
+			for(var i=0; i< 5; i++){
+				if(pinned[i]==true) continue;
+				var cell=document.getElementById("col-"+(i+1));
+				cell.onclick= function(){
+					var toggle=this.classList.toggle('gray');
+				}
+			}
+
+			return;
+		}
+
+
+		function pin(){
+			//save pinned data//turn pinned to dark gray
+			var count=0;
+			for(var i=0; i< 5; i++){
+				if(pinned[i]==true) continue;
+				var cell=document.getElementById("col-"+(i+1));
+				if(cell.classList.contains('gray')){
+					cell.classList.remove('gray');
+					cell.classList.add('darkgray');
+					pinned[i]=true;
+					count++;
+				}
+				else pinned[i]=false;
+			}
+			
+			
+			//check if its the last pin
+			var allpinned=true;
+			
+			//make unpinned dice to blank
+			if(count>0){
+				for(var i=0; i<5; i++){
+					
+					if(pinned[i]==false){
+						allpinned=false;
+						var cell=document.getElementById("col-"+(i+1));
+						cell.innerHTML= "";
+					}
+					
+				}
+				
+				
+					YourScore(pinned);
+				
+				//disable/able pin/roll button
+				document.getElementById('pin').setAttribute("disabled", "disabled");
+				if(allpinned==false){
+					document.getElementById('roll').removeAttribute("disabled");
+				}
+				else{
+					Winner();
+					document.getElementById('roll').setAttribute("disabled", "disabled");
+					
+				}
+			}
+
+
+
+		}
+
+		function Winner(){
+			var p=document.createElement("p");
+			if(computerscore<yourscore){
+				p.innerHTML="You Lost!";
+				p.style.color='red';
+			}
+			else if(yourscore<computerscore){
+				p.innerHTML="you Won!";
+				p.style.color='green';
+			}
+			else{p.innerHTML="TIE!";
+			p.style.color='blue';
+			}
+
+			document.getElementById('YourScore').appendChild(p);
+		}
+
+		
+
+
 		var game= document.getElementById("content");
 		
 		//remove start button
@@ -51,10 +173,12 @@ function main() {
 
 		//show your score
 		var p = document.createElement("p");
-		var p_content = document.createTextNode("Your Score is  "+ YourScore());
-		p.appendChild(p_content);
+		p.id="YourScore";
+		//var p_content = document.createTextNode("Your Score is  "+ YourScore());
+		//p.appendChild(p_content);
 		p.style.color="green";
 		game.appendChild(p);
+		YourScore();
 
 		//create 5 dice using table
 
@@ -87,6 +211,7 @@ function main() {
 
 		var button= document.createElement('button');
 		var t=document.createTextNode("ROLL");
+		button.id="roll";
 		button.appendChild(t);
 		div.appendChild(button);
 		button.id="roll";
@@ -95,6 +220,7 @@ function main() {
 
 		var button= document.createElement('button');
 		var t=document.createTextNode("PIN");
+		button.id="pin";
 		button.appendChild(t);
 		button.setAttribute("disabled", "disabled");
 		div.appendChild(button);
@@ -103,8 +229,11 @@ function main() {
 		
 		game.appendChild(div);
 
-		document.getElementById('roll').addEventListener("click", roll);
-		//document.getElementById('pin').addEventListener("click", pin);
+		document.getElementById('roll').addEventListener("click", dice);
+
+
+		document.getElementById('pin').addEventListener("click", pin);
+		
 
 	}
 	
