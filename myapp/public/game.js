@@ -1,5 +1,9 @@
 function main() {
-	//document.getElementById("error-message").classList.add('invisibility');
+		//hide overlay
+		var div=document.querySelector(".overlay");
+		div.classList.add("visibility");
+		
+
 	document.getElementById("intro").addEventListener("click", playGame);
 	
 	var computerscore;
@@ -56,6 +60,23 @@ function main() {
 		return Math.floor((Math.random()* 5)+1).toString();
 	}
 
+	function PopUp(message){
+		var overlay= document.querySelector("#error-message");
+		overlay.classList.remove("visibility");
+		var modal= document.querySelector(".modal");
+		console.log("modal", modal, "first child", modal.firstChild);
+		modal.firstChild.nextSibling.innerHTML=message;
+	
+		
+		overlay.classList.add('popup');
+		
+		var closebutton= document.querySelector('.closeButton');
+		closebutton.addEventListener("click", function(event){
+				modal.firstChild.nextSibling.innerHTML="";
+				overlay.classList.add('visibility');
+		});
+		
+	}
 
 	
 	function playGame(){
@@ -86,7 +107,7 @@ function main() {
 				}
 			}
 
-			return;
+			return ;
 		}
 
 
@@ -109,6 +130,12 @@ function main() {
 			//check if its the last pin
 			var allpinned=true;
 			
+			//error message if pin without pinning any dice
+			if(count==0){
+				PopUp("You should pin the dice");
+				
+			}
+
 			//make unpinned dice to blank
 			if(count>0){
 				for(var i=0; i<5; i++){
@@ -164,7 +191,8 @@ function main() {
 		
 		//remove start button
 		removeForm('intro');
-		
+
+
 		//display computer's score
 		var p = document.createElement("p");
 		var p_content = document.createTextNode(ComputerScore());
