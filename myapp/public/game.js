@@ -96,6 +96,7 @@ function main() {
 				col.innerHTML = rollDice();
 			}
 			choosingPin();
+
 		}
 
 		function choosingPin(){
@@ -123,7 +124,11 @@ function main() {
 					pinned[i]=true;
 					count++;
 				}
-				else pinned[i]=false;
+				else{pinned[i]=false;
+					cell.onclick= function(){
+						return PopUp("You should Roll first!");
+					}
+				}
 			}
 			
 			
